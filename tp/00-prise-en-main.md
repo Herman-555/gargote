@@ -8,7 +8,7 @@ Avant de modifier une application, on la fait tourner et on la lit. Ce niveau ne
 
 ## 0.1 Lancer l’application
 
-Suivez la section *Installation* du `README.md`. Vous avez terminé quand :
+Suivez la section _Installation_ du `README.md`. Vous avez terminé quand :
 
 - [ ] <http://localhost:8080/api/plats> affiche du JSON ;
 - [ ] <http://localhost:5173> affiche l’ardoise avec les plats ;
@@ -53,23 +53,23 @@ Ajoutez `-i` à la commande `curl` pour voir le code HTTP.
 
 5. Pour la requête **b**, quel code obtenez-vous ? Pourquoi pas 200 ?
 6. Pour la requête **d**, qui bloque la suppression : PHP ou PostgreSQL ? Montrez la ligne de code qui transforme ce blocage en réponse 409.
-7. Créez une commande avec `curl` (table 6, deux *Romazava* et un *Café*). Écrivez la commande `curl` complète.
+7. Créez une commande avec `curl` (table 6, deux _Romazava_ et un _Café_). Écrivez la commande `curl` complète.
 
 ## 0.4 Suivre une requête de bout en bout
 
 Quand on clique sur **Ajouter le plat**, voici le chemin parcouru. Complétez le tableau en indiquant, pour chaque étape, **le fichier et le nom de la fonction** :
 
-| # | Étape | Fichier | Fonction / ligne |
-|---|---|---|---|
-| 1 | Le formulaire est soumis | `components/PlatForm.vue` | |
-| 2 | La requête HTTP est construite | | `requete()` |
-| 3 | Vite transmet `/api/...` au port 8080 | | |
-| 4 | CodeIgniter choisit le contrôleur | | |
-| 5 | Le contrôleur lit le JSON | | |
-| 6 | Les règles de validation sont vérifiées | | |
-| 7 | La ligne est insérée | | |
-| 8 | Le formulaire prévient l’écran parent | | `emit(…)` |
-| 9 | L’écran recharge la liste | `views/CarteView.vue` | |
+| #   | Étape                                   | Fichier                   | Fonction / ligne |
+| --- | --------------------------------------- | ------------------------- | ---------------- |
+| 1   | Le formulaire est soumis                | `components/PlatForm.vue` |                  |
+| 2   | La requête HTTP est construite          |                           | `requete()`      |
+| 3   | Vite transmet `/api/...` au port 8080   |                           |                  |
+| 4   | CodeIgniter choisit le contrôleur       |                           |                  |
+| 5   | Le contrôleur lit le JSON               |                           |                  |
+| 6   | Les règles de validation sont vérifiées |                           |                  |
+| 7   | La ligne est insérée                    |                           |                  |
+| 8   | Le formulaire prévient l’écran parent   |                           | `emit(…)`        |
+| 9   | L’écran recharge la liste               | `views/CarteView.vue`     |                  |
 
 8. Où est le code métier de la création d’une commande ? Pourquoi n’est-il pas dans le contrôleur `Commandes.php` ?
 
@@ -77,16 +77,16 @@ Quand on clique sur **Ajouter le plat**, voici le chemin parcouru. Complétez le
 
 Vue est nouveau pour vous. Le code de base utilise sept notions ; trouvez **un exemple de chacune** (fichier + ligne) et expliquez-le en une phrase.
 
-| Notion | À quoi ça sert | Votre exemple |
-|---|---|---|
-| `ref()` | une variable dont le changement met l’écran à jour | |
-| `computed()` | une valeur calculée à partir d’autres, recalculée automatiquement | |
-| `v-for` | répéter un élément pour chaque élément d’une liste | |
-| `v-if` / `v-else` | afficher un élément seulement si une condition est vraie | |
-| `v-model` | lier un champ de formulaire à une variable, dans les deux sens | |
-| `defineProps` | recevoir des données du composant parent | |
-| `defineEmits` / `emit` | envoyer un événement au composant parent | |
-| `onMounted` | exécuter du code quand le composant apparaît | |
+| Notion                 | À quoi ça sert                                                    | Votre exemple |
+| ---------------------- | ----------------------------------------------------------------- | ------------- |
+| `ref()`                | une variable dont le changement met l’écran à jour                |               |
+| `computed()`           | une valeur calculée à partir d’autres, recalculée automatiquement |               |
+| `v-for`                | répéter un élément pour chaque élément d’une liste                |               |
+| `v-if` / `v-else`      | afficher un élément seulement si une condition est vraie          |               |
+| `v-model`              | lier un champ de formulaire à une variable, dans les deux sens    |               |
+| `defineProps`          | recevoir des données du composant parent                          |               |
+| `defineEmits` / `emit` | envoyer un événement au composant parent                          |               |
+| `onMounted`            | exécuter du code quand le composant apparaît                      |               |
 
 9. `Panier.vue` ne modifie jamais la quantité lui-même : il émet `plus` et `moins`. Pourquoi ce choix ? Qui modifie réellement la quantité ?
 10. Dans `PlatForm.vue`, à quoi sert le `watch` ? Que se passerait-il sans lui quand on clique sur **Modifier** d’un autre plat ?
@@ -97,7 +97,7 @@ Deux petites modifications pour vérifier que tout est en place.
 
 **a) Le nom de la gargote.** Remplacez « Chez Bao, Analakely » par le nom de votre choix. Un seul fichier à modifier.
 
-**b) Une nouvelle catégorie, sans toucher au code.** Ajoutez la catégorie *Goûter* directement en SQL, puis rechargez l’interface.
+**b) Une nouvelle catégorie, sans toucher au code.** Ajoutez la catégorie _Goûter_ directement en SQL, puis rechargez l’interface.
 
 ```sql
 INSERT INTO categorie (libelle) VALUES ('Goûter');
@@ -111,5 +111,5 @@ INSERT INTO categorie (libelle) VALUES ('Goûter');
 
 - [ ] L’application tourne (API + interface).
 - [ ] `reponses-niveau-0.md` répond aux 11 questions et contient le tableau 0.4 complet.
-- [ ] Le nom de la gargote est modifié ; *Goûter* existe en base.
+- [ ] Le nom de la gargote est modifié ; _Goûter_ existe en base.
 - [ ] Un commit `niveau 0 : prise en main`.
