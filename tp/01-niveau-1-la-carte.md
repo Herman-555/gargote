@@ -5,8 +5,8 @@
 
 ## Ce que demande Bao
 
-> « Les clients me demandent tout le temps ce qu’il y a dans le *ravitoto*. Je veux une petite description sous chaque plat.
-> Quand il n’y a plus de *mi sao*, je veux le marquer *épuisé* sans le supprimer : demain il reviendra.
+> « Les clients me demandent tout le temps ce qu’il y a dans le _ravitoto_. Je veux une petite description sous chaque plat.
+> Quand il n’y a plus de _mi sao_, je veux le marquer _épuisé_ sans le supprimer : demain il reviendra.
 > Et chaque matin je choisis un plat du jour. Je veux le voir en haut de la carte, et me souvenir de ce que j’ai proposé les jours d’avant.
 > Ah, et la semaine dernière quelqu’un a enregistré un plat à 0 Ar. Ça ne doit plus arriver. »
 
@@ -28,13 +28,13 @@
 
 Créez `database/niveau1_schema.sql`. Il modifie le schéma **existant** (pas de `DROP TABLE`).
 
-| # | Modification | Contrainte |
-|---|---|---|
-| a | `plat.description` | texte de 255 caractères au plus, facultatif |
-| b | `plat.disponible` | booléen, obligatoire, vrai par défaut |
-| c | `plat.prix` | strictement positif (`CHECK`) |
-| d | `plat.nom` | unique |
-| e | nouvelle table `plat_du_jour` | voir ci-dessous |
+| #   | Modification                  | Contrainte                                  |
+| --- | ----------------------------- | ------------------------------------------- |
+| a   | `plat.description`            | texte de 255 caractères au plus, facultatif |
+| b   | `plat.disponible`             | booléen, obligatoire, vrai par défaut       |
+| c   | `plat.prix`                   | strictement positif (`CHECK`)               |
+| d   | `plat.nom`                    | unique                                      |
+| e   | nouvelle table `plat_du_jour` | voir ci-dessous                             |
 
 **Le plat du jour.** On veut savoir quel plat était proposé chaque jour, et il ne peut y en avoir qu’un par jour.
 
@@ -47,14 +47,14 @@ plat_du_jour (date_jour, #id_plat)
 
 > **Coup de pouce.** `ALTER TABLE plat ADD COLUMN …`, `ALTER TABLE plat ADD CONSTRAINT ck_plat_prix CHECK (…)`. Nommez vos contraintes : le message d’erreur de PostgreSQL sera plus lisible.
 
-**Vérification :** exécutez le script deux fois de suite sur une base neuve (`reset.sh` puis votre script). La seconde exécution échoue-t-elle ? Est-ce normal ? *(Bonus : rendez le script ré-exécutable avec `IF NOT EXISTS`.)*
+**Vérification :** exécutez le script deux fois de suite sur une base neuve (`reset.sh` puis votre script). La seconde exécution échoue-t-elle ? Est-ce normal ? _(Bonus : rendez le script ré-exécutable avec `IF NOT EXISTS`.)_
 
 ### 1.2 Données de test
 
 Créez `database/niveau1_donnees.sql` :
 
-- la catégorie *Goûter* (attention, elle existe peut-être déjà depuis le niveau 0 : utilisez `ON CONFLICT (libelle) DO NOTHING`) ;
-- au moins **5 plats** de goûter avec une description : *mofo gasy, mokary, koba, godrogodro, menakely…* ;
+- la catégorie _Goûter_ (attention, elle existe peut-être déjà depuis le niveau 0 : utilisez `ON CONFLICT (libelle) DO NOTHING`) ;
+- au moins **5 plats** de goûter avec une description : _mofo gasy, mokary, koba, godrogodro, menakely…_ ;
 - une description pour au moins **5 plats existants** (`UPDATE`) ;
 - **2 plats épuisés** ;
 - un plat du jour pour **aujourd’hui et les 6 jours précédents**.
@@ -98,11 +98,11 @@ Un champ ajouté en base n’est pas automatiquement géré par CodeIgniter.
 
 Deux nouvelles routes :
 
-| Méthode | URL | Rôle | Codes |
-|---|---|---|---|
-| GET | `/api/plat-du-jour` | le plat du jour d’aujourd’hui, ou `null` s’il n’est pas encore choisi | 200 |
-| PUT | `/api/plat-du-jour` | corps `{"id_plat": 4}` : choisit (ou remplace) le plat du jour d’aujourd’hui | 200, 409, 422 |
-| GET | `/api/plat-du-jour/historique` | les 7 derniers jours, du plus récent au plus ancien | 200 |
+| Méthode | URL                            | Rôle                                                                         | Codes         |
+| ------- | ------------------------------ | ---------------------------------------------------------------------------- | ------------- |
+| GET     | `/api/plat-du-jour`            | le plat du jour d’aujourd’hui, ou `null` s’il n’est pas encore choisi        | 200           |
+| PUT     | `/api/plat-du-jour`            | corps `{"id_plat": 4}` : choisit (ou remplace) le plat du jour d’aujourd’hui | 200, 409, 422 |
+| GET     | `/api/plat-du-jour/historique` | les 7 derniers jours, du plus récent au plus ancien                          | 200           |
 
 Organisation attendue :
 
@@ -114,20 +114,22 @@ Models/PlatDuJourModel.php          la table plat_du_jour
 
 Règles métier, dans le service :
 
-| Règle | Si elle n’est pas respectée |
-|---|---|
-| R1 — le plat existe | 422 |
-| R2 — un plat **épuisé** ne peut pas devenir plat du jour | 409, message : *« Le mi sao est épuisé : il ne peut pas être plat du jour. »* |
-| R3 — choisir un plat du jour alors qu’il en existe déjà un aujourd’hui **le remplace** | pas une erreur |
+| Règle                                                                                  | Si elle n’est pas respectée                                                   |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| R1 — le plat existe                                                                    | 422                                                                           |
+| R2 — un plat **épuisé** ne peut pas devenir plat du jour                               | 409, message : _« Le mi sao est épuisé : il ne peut pas être plat du jour. »_ |
+| R3 — choisir un plat du jour alors qu’il en existe déjà un aujourd’hui **le remplace** | pas une erreur                                                                |
 
 > **Coup de pouce pour R3.** PostgreSQL sait faire « insérer, ou mettre à jour si la clé existe déjà » en une requête :
+>
 > ```sql
 > INSERT INTO plat_du_jour (date_jour, id_plat) VALUES (CURRENT_DATE, ?)
 > ON CONFLICT (date_jour) DO UPDATE SET id_plat = EXCLUDED.id_plat;
 > ```
+>
 > Exécutez-la avec `$this->db->query($sql, [$idPlat])` dans le modèle.
 
-4. Pourquoi R2 renvoie-t-elle 409 et pas 422 ? *(Relisez le tableau des codes dans le README.)*
+4. Pourquoi R2 renvoie-t-elle 409 et pas 422 ? _(Relisez le tableau des codes dans le README.)_
 5. Que doit-il se passer si Bao marque comme épuisé le plat qui est **déjà** plat du jour ? Proposez un comportement et justifiez-le. Vous n’êtes pas obligé de le coder.
 
 ---
@@ -138,15 +140,16 @@ Règles métier, dans le service :
 
 Complétez `$validationRules` dans `PlatModel` :
 
-| Champ | Règle |
-|---|---|
-| `nom` | obligatoire, 2 à 100 caractères, **unique** |
-| `prix` | obligatoire, entier **strictement positif**, 100 000 Ar au plus |
-| `id_categorie` | obligatoire, doit **exister** dans `categorie` |
-| `description` | facultative, 255 caractères au plus |
-| `disponible` | facultatif, doit être un booléen |
+| Champ          | Règle                                                           |
+| -------------- | --------------------------------------------------------------- |
+| `nom`          | obligatoire, 2 à 100 caractères, **unique**                     |
+| `prix`         | obligatoire, entier **strictement positif**, 100 000 Ar au plus |
+| `id_categorie` | obligatoire, doit **exister** dans `categorie`                  |
+| `description`  | facultative, 255 caractères au plus                             |
+| `disponible`   | facultatif, doit être un booléen                                |
 
 > **Coups de pouce.**
+>
 > - Les règles de CodeIgniter sont listées dans la [documentation](https://codeigniter.com/user_guide/libraries/validation.html#available-rules). Cherchez `is_natural_no_zero`, `less_than_equal_to`, `is_not_unique`, `permit_empty`.
 > - Pour l’unicité, `is_unique[plat.nom]` refuse aussi de **modifier** un plat sans changer son nom (il se trouve lui-même !). Écrivez `is_unique[plat.nom,id,{id}]` et ajoutez la règle `'id' => 'permit_empty|is_natural_no_zero'`. Le contrôleur `Plats::update()` ajoute déjà l’`id` aux données pour vous.
 > - Il n’existe pas de règle « booléen » dans CodeIgniter. Ouvrez `app/Validation/GargoteRules.php` : une règle maison `telephone_mg` y sert d’exemple. Écrivez sur le même modèle une règle `est_booleen` qui accepte `true`, `false`, `0`, `1`, `"0"` et `"1"`.
@@ -157,16 +160,16 @@ Les messages par défaut sont en français, mais ils parlent de « champ id_cate
 
 Avant d’écrire le moindre composant Vue, vérifiez **chaque ligne** de ce tableau avec `curl`, **dans l’ordre**, et collez les réponses dans vos réponses :
 
-| Requête | Code attendu |
-|---|---|
-| `POST /api/plats` `{"nom":"Café","prix":1000,"id_categorie":3}` (le nom existe déjà) | 422, erreur sur `nom` |
-| `PUT /api/plats/4` `{"nom":"Romazava","prix":7500}` (on garde son propre nom) | 200 |
-| `POST /api/plats` `{"nom":"Thé","prix":0,"id_categorie":3}` | 422, erreur sur `prix` |
-| `POST /api/plats` `{"nom":"Thé","prix":500,"id_categorie":99}` | 422, erreur sur `id_categorie` (**pas 500**) |
-| `PUT /api/plats/7` `{"disponible":"oui"}` | 422 |
-| `PUT /api/plats/7` `{"disponible":false}` | 200 |
-| `PUT /api/plat-du-jour` `{"id_plat":7}` (le *mi sao* est épuisé) | 409 |
-| `GET /api/plats?categorie=2&disponible=1` | 200, sans le *mi sao* |
+| Requête                                                                              | Code attendu                                 |
+| ------------------------------------------------------------------------------------ | -------------------------------------------- |
+| `POST /api/plats` `{"nom":"Café","prix":1000,"id_categorie":3}` (le nom existe déjà) | 422, erreur sur `nom`                        |
+| `PUT /api/plats/4` `{"nom":"Romazava","prix":7500}` (on garde son propre nom)        | 200                                          |
+| `POST /api/plats` `{"nom":"Thé","prix":0,"id_categorie":3}`                          | 422, erreur sur `prix`                       |
+| `POST /api/plats` `{"nom":"Thé","prix":500,"id_categorie":99}`                       | 422, erreur sur `id_categorie` (**pas 500**) |
+| `PUT /api/plats/7` `{"disponible":"oui"}`                                            | 422                                          |
+| `PUT /api/plats/7` `{"disponible":false}`                                            | 200                                          |
+| `PUT /api/plat-du-jour` `{"id_plat":7}` (le _mi sao_ est épuisé)                     | 409                                          |
+| `GET /api/plats?categorie=2&disponible=1`                                            | 200, sans le _mi sao_                        |
 
 6. Avant votre règle `is_not_unique`, la quatrième requête renvoyait 500. Pourquoi ? Qui détectait l’erreur, et pourquoi est-ce un problème de laisser PostgreSQL la détecter seul ?
 
@@ -194,16 +197,16 @@ Dans `PlatList.vue` :
 
 Dans `CommandeView.vue` : un plat épuisé reste visible mais on ne peut pas l’ajouter au panier (`:disabled`).
 
-7. Si l’on désactive le bouton dans l’interface, un plat épuisé peut-il quand même être commandé ? Prouvez-le avec une requête `curl`. *(Vous corrigerez ce trou au niveau 2.)*
+7. Si l’on désactive le bouton dans l’interface, un plat épuisé peut-il quand même être commandé ? Prouvez-le avec une requête `curl`. _(Vous corrigerez ce trou au niveau 2.)_
 
 ### 1.10 Le composant `PlatDuJour.vue`
 
 Créez `src/components/PlatDuJour.vue` et utilisez-le dans **deux** écrans :
 
-| Écran | Prop `modifiable` | Comportement |
-|---|---|---|
-| `CarteView` | `true` | affiche le plat du jour ; une liste déroulante des plats **disponibles** et un bouton **Choisir** permettent de le changer |
-| `CommandeView` | `false` | affiche le plat du jour ; un clic dessus émet `choisir` et le plat s’ajoute au panier |
+| Écran          | Prop `modifiable` | Comportement                                                                                                               |
+| -------------- | ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `CarteView`    | `true`            | affiche le plat du jour ; une liste déroulante des plats **disponibles** et un bouton **Choisir** permettent de le changer |
+| `CommandeView` | `false`           | affiche le plat du jour ; un clic dessus émet `choisir` et le plat s’ajoute au panier                                      |
 
 S’il n’y a pas encore de plat du jour, le composant l’indique et, en mode modifiable, invite à en choisir un. Si l’API répond 409, le message s’affiche dans le composant.
 
